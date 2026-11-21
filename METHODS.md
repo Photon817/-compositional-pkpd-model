@@ -228,23 +228,23 @@ dV/dt = 2 λ0 λ1 V / (2 λ0 V + λ1)  -  κ C(t) V
 
 ---
 
-## 3. 图注（英文，可直接用于稿件）
+## 3. 图注
 
-**Figure 1.** Compositional PK/PD model. The pharmacokinetic (PK) module (left) is a two-compartment oral model; the pharmacodynamic (PD) module (right) is a reduced EGFR → MEK → ERK → apoptosis cascade. The two modules are glued on the scalar interface `C_free` (free plasma drug concentration). The composite is the pushout of the two open models: `C_free` has a single copy in the composite, and the PD input is the image of the PK state under the interface map.
+**图 1（组合框架）**：左：PK 模块（二室口服）；右：PD 模块（EGFR → MEK → ERK → 凋亡）。两者在标量接口 `C_free`（游离血浆药物浓度）上胶合；复合模型是两个开模型的推出，`C_free` 在复合中只有一个副本，PD 输入是 PK 状态在接口映射下的像。
 
-**Figure 2.** Clinical exposure and target occupancy. (a) Total plasma concentration for 100, 250, and 500 mg q24h over 14 days. (b) Free plasma concentration; dashed line, effective dissociation constant `Kd_eff = 0.15 μM`. (c) EGFR occupancy. (d) Summary of free Cmax, maximum occupancy, and maximum pERK inhibition. Parameters are representative literature values (Table 1).
+**图 2（临床暴露与靶点占有）**：(a) 100 / 250 / 500 mg q24h 14 天的总血浆浓度；(b) 游离血浆浓度，虚线为有效解离常数 `Kd_eff = 0.15 μM`；(c) EGFR 占有；(d) 游离 Cmax、最大占有、最大 pERK 抑制汇总。参数为代表性文献值（表 1）。
 
-**Figure 3.** Signal response and apoptotic output. (a) Steady-state pERK inhibition vs free drug concentration; shaded band, clinical Cmax range at 250 mg q24h; dotted line, 50% inhibition. (b) pERK inhibition during a 72-h steady-state window for the three doses. (c) Daily peak and trough pERK inhibition vs dose; shaded band, peak–trough range. (d) Maximum apoptosis fold vs dose; dashed line, clinical dose.
+**图 3（信号与凋亡）**：(a) 稳态 pERK 抑制 vs 游离药浓度；阴影为 250 mg q24h 的临床 Cmax 区间；虚线为 50% 抑制。(b) 三个剂量在 72 h 稳态窗口内的 pERK 抑制。(c) 每日峰值/谷值 pERK 抑制 vs 剂量；阴影为峰–谷范围。(d) 最大凋亡倍数 vs 剂量；虚线为临床剂量。
 
-**Figure 4.** Dose–schedule–efficacy landscape and interface sensitivity. (a) Apoptosis AUC as a function of dose and dosing interval. (b) Iso-effect contour map; the orange dot marks 250 mg q24h. (c) Interface ablation: using total drug or a twofold free-drug input instead of free drug changes the predicted apoptosis fold. (d) Same total daily dose (250 mg/day) delivered at different intervals; the mean pERK inhibition is nearly identical, but the time above the 0.15 threshold increases from 20.4 h/day (q24h) to 24.0 h/day (q12h, q8h, q6h).
+**图 4（剂量–方案–疗效与接口敏感性）**：(a) 凋亡 AUC 随剂量和给药间隔的变化；(b) 等效应等高线，橙点为 250 mg q24h；(c) 接口消融：用总药或 2× 游离药代替游离药，会改变预测的凋亡倍数；(d) 同一天总剂量（250 mg/day）在不同间隔下给药：平均 pERK 抑制几乎相同，但高于 0.15 阈值的时间从 20.4 h/day（q24h）增加到 24.0 h/day（q12h / q8h / q6h）。
 
-**Figure 5.** Exact vs naive lumping of the two-compartment PK model. (a) Central concentration after a 250-mg IV bolus: full two-compartment model, exact slow-mode reduction, and naive total-amount one-compartment model. Inset text: commutator residuals. (b) Eigenvalue separation ratio `|λ_slow|/|λ_fast|` over the (Q, Vp) plane; red contour, 10-fold separation. (c) Relative trajectory error of the two reductions vs Q; shaded region, poor fast/slow separation. (d) Downstream error in pERK inhibition (naive minus full) after a 500-mg bolus.
+**图 5（精确 vs 朴素降阶）**：(a) 250 mg IV bolus 后的中央室浓度：完整二室、精确慢模、朴素总量一室；左下角为交换残差。(b) (Q, Vp) 平面上的特征值分离比 `|λ_slow|/|λ_fast|`；红线为 10× 分离。(c) 两种降阶的相对轨迹误差 vs Q；阴影为快慢分离较差的区域。(d) 500 mg bolus 后 pERK 抑制的下游误差（朴素 − 完整）。
 
-**Figure 6.** External LXF A677 xenograft dataset (Eigenmann et al., 2016; redistributed under BSD-3-Clause). (a) Individual tumour-volume trajectories (thin lines) and mean ± SEM (thick lines) for gefitinib at 0, 6.25, 25, and 100 mg/kg. (b) Steady-state plasma concentrations at the two sampling windows; horizontal bars, means. (c) Body-weight change from baseline; shaded bands, SEM. (d) Tumour volume at day 30 and tumour-growth inhibition (TGI) relative to vehicle.
+**图 6（外部 LXF A677 数据集）**：(a) gefitinib 0 / 6.25 / 25 / 100 mg/kg 的个体肿瘤体积轨迹（细线）和均值 ± SEM（粗线）；(b) 两个采样窗口的稳态血浆浓度，横线为均值；(c) 相对基线的体重变化，阴影为 SEM；(d) 第 30 天肿瘤体积和相对 vehicle 的 TGI。
 
-**Figure 7.** Tumour-growth calibration and external validation against the LXF A677 dataset. (a) Vehicle growth; points, mean ± SEM; line, fit of the Eigenmann growth model (`λ0 = 0.337 day⁻¹`, `λ1 = 41.1 mm³/day`). (b) 100 mg/kg; shaded region, dosing period; line, model with fitted kill `κ = 2.99 × 10⁻⁴ mL/(ng·day)` and the measured steady-state exposure (`C_ss = 1703 ng/mL`) applied as a step during dosing. (c) External validation at 6.25 and 25 mg/kg; the model captures 6.25 mg/kg but over-predicts inhibition at 25 mg/kg. (d) Day-30 tumour volume and TGI versus vehicle; labels show observed (left bar) and model (right bar) TGI. The 25 mg/kg mismatch has two sources: the systematic bias of the per-subject PK reconstruction (observed/reconstructed median ratio 1.2–2.7) and the monotone kill term.
+**图 7（TGI 校准与外部验证）**：(a) Vehicle 生长；点为均值 ± SEM，线为 Eigenmann 生长模型拟合（`λ0 = 0.337 day⁻¹`，`λ1 = 41.1 mm³/day`）。(b) 100 mg/kg；阴影为给药期，线为拟合 kill `κ = 2.99 × 10⁻⁴ mL/(ng·day)`，暴露为实测稳态 `C_ss = 1703 ng/mL` 的阶跃输入。(c) 6.25 / 25 mg/kg 的外部验证；模型抓住了 6.25，但在 25 mg/kg 高估抑制。(d) 第 30 天肿瘤体积与 TGI；标签为实测（左柱）和模型（右柱）。25 mg/kg 的失配有两层来源：逐鼠 PK 重建的系统偏差（实测/重建中位比 1.2–2.7）和单调 kill 项。
 
-**Figure S1.** One-at-a-time sensitivity of the apoptosis AUC to ±50% changes in CL, Vc, fu, Kd, and ka at 250 mg q24h.
+**图 S1（参数敏感性）**：250 mg q24h 下，CL、Vc、fu、Kd、ka 各 ±50% 对凋亡 AUC 的影响。
 
 ---
 

@@ -30,7 +30,10 @@ GREY = "#4D4D4D"
 
 def setup_style() -> None:
     plt.rcParams.update({
-        "font.family": "DejaVu Sans",
+        "font.family": "sans-serif",
+        "font.sans-serif": ["Hiragino Sans GB", "Arial Unicode MS",
+                           "PingFang HK", "DejaVu Sans"],
+        "axes.unicode_minus": False,
         "font.size": 8.5,
         "axes.titlesize": 9.5,
         "axes.labelsize": 8.5,
@@ -80,11 +83,11 @@ def main() -> None:
         ax_a.errorbar(stats["TIME"], stats["mean"], yerr=stats["sem"],
                       color=c, lw=2.0, marker="o", ms=3.5, capsize=2,
                       label=f"{dose:g} mg/kg")
-    ax_a.set_xlabel("time (days)")
-    ax_a.set_ylabel("tumour volume (mm$^3$)")
+    ax_a.set_xlabel("时间（天）")
+    ax_a.set_ylabel("肿瘤体积（mm$^3$）")
     ax_a.set_xlim(0, 30)
     ax_a.legend(frameon=False, fontsize=6.8, ncol=2)
-    ax_a.set_title("Gefitinib tumour growth inhibition (LXF A677)")
+    ax_a.set_title("Gefitinib 肿瘤生长抑制（LXF A677）")
     panel_label(ax_a, "a")
 
     # (b) PK concentrations
@@ -104,10 +107,10 @@ def main() -> None:
                           color="black", lw=1.4)
     ax_b.set_xticks([0, 1, 2])
     ax_b.set_xticklabels(["6.25", "25", "100"])
-    ax_b.set_xlabel("dose (mg/kg)")
-    ax_b.set_ylabel("plasma concentration (ng/mL)")
+    ax_b.set_xlabel("剂量（mg/kg）")
+    ax_b.set_ylabel("血浆浓度（ng/mL）")
     ax_b.set_yscale("log")
-    ax_b.set_title("Gefitinib exposure at steady state")
+    ax_b.set_title("Gefitinib 稳态暴露")
     panel_label(ax_b, "b")
 
     # (c) body-weight change
@@ -125,11 +128,11 @@ def main() -> None:
                           stats["mean"] + stats["sem"],
                           color=dose_colors[dose], alpha=0.12, lw=0)
     ax_c.axhline(0, color=GREY, lw=0.8, ls=":")
-    ax_c.set_xlabel("time (days)")
-    ax_c.set_ylabel("body-weight change (g)")
+    ax_c.set_xlabel("时间（天）")
+    ax_c.set_ylabel("体重变化（g）")
     ax_c.set_xlim(0, 30)
     ax_c.legend(frameon=False, fontsize=6.8, ncol=2)
-    ax_c.set_title("Tolerability")
+    ax_c.set_title("耐受性")
     panel_label(ax_c, "c")
 
     # (d) day-30 tumour volume and TGI
@@ -153,9 +156,10 @@ def main() -> None:
                       ha="center", fontsize=6.2)
     ax_d.set_xticks(x)
     ax_d.set_xticklabels([f"{d:g}" for d in doses])
-    ax_d.set_xlabel("dose (mg/kg)")
-    ax_d.set_ylabel(f"tumour volume at day {int(last_day)} (mm$^3$)")
-    ax_d.set_title("Day-30 tumour volume and TGI")
+    ax_d.set_xlabel("剂量（mg/kg）")
+    ax_d.set_ylabel(f"第 {int(last_day)} 天肿瘤体积（mm$^3$）")
+    ax_d.set_ylim(0, max(vals[i] + errs[i] for i in range(len(vals))) * 1.15)
+    ax_d.set_title("第 30 天肿瘤体积与 TGI")
     panel_label(ax_d, "d")
 
     fig.tight_layout()

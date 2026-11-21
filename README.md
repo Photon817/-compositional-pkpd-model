@@ -1,127 +1,127 @@
-# Compositional PK/PD
+# 组合式 PK/PD
 
-**A model is reusable only when its interface is explicit.** This repository turns a pharmacokinetic (PK) model and a pharmacodynamic (PD) model into *open systems*, glues them on the free-drug concentration, and shows what composition buys: dose–schedule optimization, interface-error attribution, exact lumping, and external tumour-growth validation.
+**模型只有把接口说清楚，才可能被复用。** 这个仓库把一个 PK 模型和一个 PD 模型变成「开系统」，在游离药物浓度上做推出，展示组合到底买到了什么：剂量–方案优化、接口误差归因、精确粗粒化，以及外部肿瘤生长验证。
 
-![Compositional PK/PD](figs/fig1_framework.png)
-
----
-
-## The problem
-
-BioModels hosts thousands of SBML models, yet few are reused. The bottleneck is not the file format. SBML describes **closed** systems: there is no native notion of a port, a boundary, or a typed interface. When two models share a species, "sharing" is a string match. There is no pushout, no associativity, and no guarantee that the composite means what you think it means.
-
-Category theory supplies the missing structure:
-
-- an **open model** is a cospan `I -> S <- O` with a decoration (the reaction network);
-- **gluing** is the pushout on the shared interface;
-- **semantics** is a functor from open models to dynamical systems.
-
-The practical consequence is simple: **shared coordinates get the sum of both vector fields; everything else is untouched.** The interface is exactly where the semantics changes. That is what makes "which interface did you choose?" a falsifiable question.
+![组合式 PK/PD](figs/fig1_framework.png)
 
 ---
 
-## What is in this repository
+## 问题
 
-| Task | Status | What it shows |
+BioModels 有上千个 SBML 模型，真正被复用的很少。瓶颈不是文件格式。SBML 描述的是**闭系统**：没有原生的端口、边界、类型化接口。两个模型共享一个物种时，「共享」只是字符串匹配；没有推出、没有结合律，也没有任何东西保证复合模型的意思和你以为的一样。
+
+范畴论补的正是这块：
+
+- **开模型** = 带装饰的余跨 `I -> S <- O`；
+- **胶合** = 共享接口上的推出；
+- **语义** = 从开模型到动力系统的函子。
+
+实际后果很简单：**共享坐标得到两边向量场之和，其余坐标不动。** 接口就是语义被修改的地方。也正因如此，「你选的是哪个接口？」才成为一个可以被证伪的问题。
+
+---
+
+## 仓库里有什么
+
+| 任务 | 状态 | 内容 |
 |---|---|---|
-| **T4** — glue two models | done | two-compartment gefitinib PK ⊗ EGFR → MEK → ERK → apoptosis PD on `C_free`; dose–occupancy–signal–efficacy |
-| **T6** — exact lumping | done | exact slow mode of the 2-compartment PK vs the naive total-amount 1-compartment model |
-| **External validation** | done | LXF A677 xenograft TGI: vehicle / 6.25 / 100 mg/kg fit; 25 mg/kg anomaly |
-| **T5** — composability index | blueprint | interface signature + profunctor/coend index; not run at 100-model scale |
+| **T4** — 胶合两个模型 | 完成 | 二室 gefitinib PK ⊗ EGFR → MEK → ERK → 凋亡 PD，接口为 `C_free`；剂量–占有–信号–疗效 |
+| **T6** — 精确集块 | 完成 | 二室 PK 的精确慢模 vs 朴素总量一室模型 |
+| **外部验证** | 完成 | LXF A677 异种移植 TGI：vehicle / 6.25 / 100 mg/kg 拟合；25 mg/kg 异常 |
+| **T5** — 可组合性索引 | 设计 | 接口签名 + profunctor/coend 索引；未做 100 模型规模的实验 |
 
 ---
 
-## What the model shows
+## 模型说明了什么
 
-### 1. The standard dose is sub-IC50
+### 1. 标准剂量在 IC50 以下
 
-At 250 mg q24h, the simulated free Cmax is **0.118 μM**, the maximum EGFR occupancy is **0.41**, and the peak pERK inhibition is **20%**. The pERK IC50 is **0.238 μM**, so the clinical dose sits on the steep part of the curve but below the half-maximal point. Doubling the dose to 500 mg gives 0.237 μM, 0.59 occupancy, and 45% inhibition.
+250 mg q24h 时，模拟的游离 Cmax 为 **0.118 μM**，最大 EGFR 占有为 **0.41**，峰值 pERK 抑制为 **20%**。pERK 的 IC50 是 **0.238 μM**，所以临床剂量落在曲线陡峭段，但在半最大点以下。把剂量加倍到 500 mg，得到 0.237 μM、0.59 占有、45% 抑制。
 
-![PK and occupancy](figs/fig2_pk_occupancy.png)
+![PK 与占有](figs/fig2_pk_occupancy.png)
 
-### 2. Schedule flattening buys coverage, not average effect
+### 2. schedule 扁平化买的是覆盖时间，不是平均效应
 
-At the same total daily dose (250 mg/day), four schedules give almost identical mean pERK inhibition (**0.173**), but very different time above the 0.15 threshold:
+在相同日总剂量（250 mg/day）下，四种方案的**平均 pERK 抑制几乎相同（0.173）**，但高于 0.15 阈值的时间差别很大：
 
-| schedule | time above 0.15 |
+| 方案 | 高于 0.15 的时间 |
 |---|---:|
-| 250 mg q24h | **20.4 h/day** |
-| 125 mg q12h | **24.0 h/day** |
-| 83 mg q8h | **24.0 h/day** |
-| 62.5 mg q6h | **24.0 h/day** |
+| 250 mg q24h | **20.4 小时/天** |
+| 125 mg q12h | **24.0 小时/天** |
+| 83 mg q8h | **24.0 小时/天** |
+| 62.5 mg q6h | **24.0 小时/天** |
 
-The q24h regimen has a higher peak (0.20) but dips below 0.15; the flatter regimens stay above it all day. **If the target is threshold coverage rather than average exposure, schedule matters more than dose.**
+q24h 的峰值更高（0.20），但会掉到 0.15 以下；更扁平的方案全天都在阈值以上。**如果目标是阈值覆盖而不是平均暴露，schedule 比剂量更重要。**
 
-![Dose–schedule surface](figs/fig4_dose_schedule_surface.png)
+![剂量–方案曲面](figs/fig4_dose_schedule_surface.png)
 
-### 3. Interface choice changes the prediction
+### 3. 接口选择会改变预测
 
-Using **total** drug instead of **free** drug as the PD interface pushes the 250 mg apoptosis output from **1.27** to **3.06** (near saturation); using 2× free drug gives **1.71**. The difference is not a fitting artefact: it is exactly the interface map `D = fu · C_total`. This is the T4 criterion in action.
+用**总药**而不是**游离药**作为 PD 接口，会把 250 mg 的凋亡输出从 **1.27** 推到 **3.06**（接近饱和）；用 2× 游离药则推到 **1.71**。这不是拟合假象，而是接口映射 `D = fu · C_total` 的直接后果。这就是 T4 判据在起作用。
 
-### 4. The exact PK reduction is not the total amount
+### 4. 精确 PK 降阶不是总量
 
-The two-compartment PK has eigenvalues **−0.01345** and **−0.2324 day⁻¹** (half-lives 51.5 h and 3.0 h; separation ≈ 17×). The exact one-dimensional lumping is a weighted mode,
+二室 PK 的特征值是 **−0.01345** 和 **−0.2324 day⁻¹**（半衰期 51.5 h 和 3.0 h；分离约 17×）。精确的一维集块是一个加权模：
 
 ```
 T = 0.456 A1 + 0.544 A2,    dT/dt = −0.01345 T,
 ```
 
-not the total amount `A1 + A2`. The commutator residual is **3.1 × 10⁻¹⁷** for the exact slow mode and **2.7 × 10⁻²** for the naive total-amount model. The naive model under-predicts pERK inhibition early and over-predicts it late — a directional error, not noise.
+不是总量 `A1 + A2`。交换残差对精确慢模是 **3.1 × 10⁻¹⁷**，对朴素总量模型是 **2.7 × 10⁻²**。朴素模型在早期低估 pERK 抑制、后期高估——这是方向性误差，不是噪声。
 
-![Exact lumping](figs/fig5_lumping.png)
+![精确集块](figs/fig5_lumping.png)
 
-### 5. External TGI: the model fits the edges, not the middle
+### 5. 外部 TGI：模型拟合了两端，没拟合中间
 
-We calibrated a tumour-growth output layer on the public LXF A677 xenograft dataset:
+在公开的 LXF A677 异种移植数据上校准了一个肿瘤体积输出层：
 
 ```
 dV/dt = 2 λ0 λ1 V / (2 λ0 V + λ1) − κ C(t) V
 ```
 
-| parameter | value |
+| 参数 | 值 |
 |---|---|
 | λ0 | 0.337 day⁻¹ |
 | λ1 | 41.1 mm³/day |
 | κ | 2.99 × 10⁻⁴ mL/(ng·day) |
 
-The model fits vehicle (RMSE 115), 6.25 mg/kg (107), and 100 mg/kg (55). **25 mg/kg is the mismatch**: the observed tumours grow more than vehicle (TGI −28%), while the model predicts +22%. The deviation is ≈1.8 SEM.
+模型拟合 vehicle（RMSE 115）、6.25 mg/kg（107）和 100 mg/kg（55）。**25 mg/kg 是失配组**：观察到的肿瘤比 vehicle 还大（TGI −28%），模型却预测 +22%；偏差约 1.8 SEM。
 
-Half of that mismatch is not the TGI model: reconstructing each mouse's PK from the tabulated `KA, V, KE` underestimates the measured concentrations by a median factor of **1.23 (6.25), 1.50 (25), 2.70 (100)**. Using it directly inflates κ and makes the 25 mg/kg prediction worse (725 vs 865). The primary calibration therefore uses the **measured** steady-state exposure, which isolates the PK bias from the kill term.
+其中一半不是 TGI 模型的错：用数据里的 `KA, V, KE` 逐鼠重建 PK，会低估实测浓度，中位比为 **1.23（6.25）、1.50（25）、2.70（100）**。直接拿它拟合会把 κ 高估，25 mg/kg 的预测更差（725 vs 865）。所以主校准用**实测稳态暴露**，把 PK 偏差和 kill 项分开。
 
-![TGI calibration](figs/fig7_tgi_calibration.png)
+![TGI 校准](figs/fig7_tgi_calibration.png)
 
 ---
 
-## Reproduce
+## 复现
 
 ```bash
 git clone https://github.com/Photon817/compositional-pkpd.git
 cd compositional-pkpd
 pip install -r requirements.txt
 
-python3 figures.py        # Fig 1–5 + S1
-python3 data_explore.py   # Fig 6 (external dataset)
-python3 calibrate_tgi.py  # Fig 7 (TGI calibration + validation)
+python3 figures.py        # 图 1–5 + S1
+python3 data_explore.py   # 图 6（外部数据）
+python3 calibrate_tgi.py  # 图 7（TGI 校准 + 验证）
 ```
 
 ---
 
-## Repository layout
+## 目录
 
 ```
 .
-├── README.md                 # this file
-├── METHODS.md                # detailed derivations, parameter table, captions
-├── params.py                 # PK/PD parameters
-├── models.py                 # ODEs, dosing, dose–response, lumping
-├── figures.py                # Fig 1–5 + S1
-├── data_explore.py           # Fig 6
-├── calibrate_tgi.py          # Fig 7
+├── README.md                 # 本文件
+├── METHODS.md                # 详细推导、参数表、图注
+├── params.py                 # PK/PD 参数
+├── models.py                 # ODE、给药、剂量反应、集块
+├── figures.py                # 图 1–5 + S1
+├── data_explore.py           # 图 6
+├── calibrate_tgi.py          # 图 7
 ├── data/
-│   ├── README.md             # source, license, column dictionary
-│   └── *.csv                 # LXF A677 dataset (BSD-3-Clause)
+│   ├── README.md             # 来源、许可、列字典
+│   └── *.csv                 # LXF A677 数据集（BSD-3-Clause）
 └── figs/
-    ├── fig1_framework.*      # framework
+    ├── fig1_framework.*      # 组合框架
     ├── fig2_pk_occupancy.*
     ├── fig3_signal_efficacy.*
     ├── fig4_dose_schedule_surface.*
@@ -133,17 +133,17 @@ python3 calibrate_tgi.py  # Fig 7 (TGI calibration + validation)
 
 ---
 
-## Data and attribution
+## 数据与署名
 
-The external dataset is from **Eigenmann et al., *Mol Cancer Ther* 2016**, redistributed via the BSD-3-Clause repository [`DavAug/ErlotinibGefitinib`](https://github.com/DavAug/ErlotinibGefitinib). The CSVs are unmodified; see [`data/README.md`](data/README.md) for the column dictionary and the original citation.
+外部数据来自 **Eigenmann et al., *Mol Cancer Ther* 2016**，通过 BSD-3-Clause 仓库 [`DavAug/ErlotinibGefitinib`](https://github.com/DavAug/ErlotinibGefitinib) 转发。CSV 未修改；列字典和原始引用见 [`data/README.md`](data/README.md)。
 
-The code in this repository is released under the **BSD 3-Clause License** (see [`LICENSE`](LICENSE)).
+本仓库代码使用 **BSD 3-Clause License**（见 [`LICENSE`](LICENSE)）。
 
 ---
 
-## Caveats
+## 局限
 
-- **The human PK/PD parameters are representative, not a fit.** They are assembled from clinical PK and generic EGFR/MAPK biology; the absolute numbers are not for clinical decision-making.
-- **The PD model is reduced.** No dimerisation, receptor recycling, RAF/MEK/ERK feedback, nuclear translocation, or Bcl-2 family; it captures the monotone chain occupancy → signal → apoptosis.
-- **The TGI calibration is mouse xenograft, not human.** The 25 mg/kg mismatch has two sources — PK reconstruction bias and the monotone kill term — and the two must be reported separately.
-- **T5 is a design, not a 100-model experiment.** The interface signature and profunctor/coend index are specified in [`METHODS.md`](METHODS.md); the full retrieval benchmark remains future work.
+- **人 PK/PD 参数是代表性的，不是拟合结果。** 它们来自临床 PK 和通用 EGFR/MAPK 生物学；绝对数值不能用于临床决策。
+- **PD 模型是简化的。** 没有二聚化、受体内吞/再循环、RAF/MEK/ERK 反馈、核转位、Bcl-2 家族；它捕捉的是「占有 → 信号 → 凋亡」的单调链。
+- **TGI 校准是小鼠异种移植，不是人。** 25 mg/kg 的失配有两层来源——PK 重建偏差和单调 kill 项——报告时必须分开。
+- **T5 是设计，不是 100 模型实验。** 接口签名和 profunctor/coend 索引写在 [`METHODS.md`](METHODS.md)；完整检索基准是后续工作。

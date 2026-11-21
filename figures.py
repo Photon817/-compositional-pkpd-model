@@ -51,7 +51,10 @@ GREY = "#4D4D4D"
 
 def setup_style() -> None:
     plt.rcParams.update({
-        "font.family": "DejaVu Sans",
+        "font.family": "sans-serif",
+        "font.sans-serif": ["Hiragino Sans GB", "Arial Unicode MS",
+                           "PingFang HK", "DejaVu Sans"],
+        "axes.unicode_minus": False,
         "font.size": 8.5,
         "axes.titlesize": 9.5,
         "axes.labelsize": 8.5,
@@ -133,12 +136,12 @@ def fig2_pk_occupancy(pk: PKParams, pd: PDParams) -> None:
     # (a) total plasma concentration
     for sim, c, lab in zip(sims, colors, labels):
         ax_a.plot(sim["t"] / 24.0, sim["C_total"], color=c, lw=1.3, label=lab)
-    ax_a.set_xlabel("time (days)")
-    ax_a.set_ylabel("total plasma conc. (mg/L)")
+    ax_a.set_xlabel("时间（天）")
+    ax_a.set_ylabel("总血浆浓度（mg/L）")
     ax_a.set_xlim(0, 14)
     ax_a.legend(frameon=True, facecolor="white", edgecolor="none",
                 framealpha=0.9, loc="upper left", ncol=1, fontsize=6.5)
-    ax_a.set_title("Total drug exposure")
+    ax_a.set_title("总药暴露")
     panel_label(ax_a, "a")
 
     # (b) free concentration, with Kd_eff line
@@ -146,21 +149,21 @@ def fig2_pk_occupancy(pk: PKParams, pd: PDParams) -> None:
         ax_b.plot(sim["t"] / 24.0, sim["D_uM"], color=c, lw=1.3, label=lab)
     ax_b.axhline(kd_eff(pd), color=GREY, ls="--", lw=1.0)
     ax_b.text(0.8, kd_eff(pd) * 1.08, r"$K_d^{eff}$", color=GREY, fontsize=8)
-    ax_b.set_xlabel("time (days)")
-    ax_b.set_ylabel("free plasma conc. ($\\mu$M)")
+    ax_b.set_xlabel("时间（天）")
+    ax_b.set_ylabel("游离血浆浓度（μM）")
     ax_b.set_xlim(0, 14)
-    ax_b.set_title("Free drug and target binding")
+    ax_b.set_title("游离药与靶点结合")
     panel_label(ax_b, "b")
 
     # (c) occupancy
     for sim, c, lab in zip(sims, colors, labels):
         ax_c.plot(sim["t"] / 24.0, sim["occupancy"], color=c, lw=1.3, label=lab)
     ax_c.axhline(0.5, color=GREY, ls=":", lw=1.0)
-    ax_c.set_xlabel("time (days)")
-    ax_c.set_ylabel("target occupancy")
+    ax_c.set_xlabel("时间（天）")
+    ax_c.set_ylabel("靶点占有")
     ax_c.set_ylim(0, 0.85)
     ax_c.set_xlim(0, 14)
-    ax_c.set_title("EGFR occupancy")
+    ax_c.set_title("EGFR 占有")
     panel_label(ax_c, "c")
 
     # (d) summary bars: Cmax, occupancy max, pERK inhibition max
@@ -169,16 +172,16 @@ def fig2_pk_occupancy(pk: PKParams, pd: PDParams) -> None:
     vals_cmax = [m["Cmax_uM"] for m in metrics]
     vals_occ = [m["occ_max"] for m in metrics]
     vals_perk = [m["perk_max"] for m in metrics]
-    ax_d.bar(x - w, vals_cmax, w, color=PALETTE[0], label="Cmax free ($\\mu$M)")
-    ax_d.bar(x, vals_occ, w, color=PALETTE[1], label="max occupancy")
-    ax_d.bar(x + w, vals_perk, w, color=PALETTE[2], label="max pERK inh.")
+    ax_d.bar(x - w, vals_cmax, w, color=PALETTE[0], label="游离 Cmax（μM）")
+    ax_d.bar(x, vals_occ, w, color=PALETTE[1], label="最大占有")
+    ax_d.bar(x + w, vals_perk, w, color=PALETTE[2], label="最大 pERK 抑制")
     ax_d.set_xticks(x)
     ax_d.set_xticklabels([f"{int(d)}" for d in doses])
-    ax_d.set_xlabel("dose (mg q24h)")
-    ax_d.set_ylabel("value")
+    ax_d.set_xlabel("剂量（mg q24h）")
+    ax_d.set_ylabel("数值")
     ax_d.set_ylim(0, 1.0)
     ax_d.legend(frameon=False, fontsize=6.5, loc="upper right")
-    ax_d.set_title("Exposure-response summary")
+    ax_d.set_title("暴露–反应汇总")
     panel_label(ax_d, "d")
 
     fig.tight_layout()
@@ -206,13 +209,15 @@ def fig3_signal_efficacy(pk: PKParams, pd: PDParams) -> None:
     D = np.logspace(-3, 0.3, 300)
     perk = np.array([1.0 - pd_steady_state_y(pd, d) / baseline_pd(pd)[3] for d in D])
     ax_a.semilogx(D, perk, color=PALETTE[0], lw=2.0)
+    ax_a.set_xticks([1e-3, 1e-2, 1e-1, 1e0])
+    ax_a.set_xticklabels(["0.001", "0.01", "0.1", "1"])
     ax_a.axhline(0.5, color=GREY, ls=":", lw=1.0)
     ax_a.axvspan(0.05, 0.15, color=PALETTE[1], alpha=0.12, lw=0)
-    ax_a.text(0.055, 0.78, "clinical\nCmax range", fontsize=6.8, color=PALETTE[1])
-    ax_a.set_xlabel("free drug ($\\mu$M)")
-    ax_a.set_ylabel("pERK inhibition")
+    ax_a.text(0.055, 0.78, "临床\nCmax 范围", fontsize=6.8, color=PALETTE[1])
+    ax_a.set_xlabel("游离药（μM）")
+    ax_a.set_ylabel("pERK 抑制")
     ax_a.set_ylim(0, 1.0)
-    ax_a.set_title("Steady-state signal response")
+    ax_a.set_title("稳态信号反应")
     panel_label(ax_a, "a")
 
     # (b) pERK time courses at steady state (last 72 h)
@@ -222,11 +227,11 @@ def fig3_signal_efficacy(pk: PKParams, pd: PDParams) -> None:
         mask = t >= t[-1] - 72.0
         ax_b.plot((t[mask] - t[mask][0]) / 24.0, sim["pERK_inhibition"][mask],
                   color=c, lw=1.4, label=lab)
-    ax_b.set_xlabel("time in steady-state window (days)")
-    ax_b.set_ylabel("pERK inhibition")
+    ax_b.set_xlabel("稳态窗口时间（天）")
+    ax_b.set_ylabel("pERK 抑制")
     ax_b.set_ylim(0, 1.0)
     ax_b.legend(frameon=False, fontsize=6.8, loc="upper right")
-    ax_b.set_title("pERK dynamics")
+    ax_b.set_title("pERK 动力学")
     panel_label(ax_b, "b")
 
     # (c) peak/trough band vs dose
@@ -243,17 +248,17 @@ def fig3_signal_efficacy(pk: PKParams, pd: PDParams) -> None:
     peak = np.array(peak)
     trough = np.array(trough)
     ax_c.fill_between(dose_grid, trough, peak, color=PALETTE[0], alpha=0.16, lw=0)
-    ax_c.plot(dose_grid, peak, "o-", color=PALETTE[0], lw=1.8, label="peak")
-    ax_c.plot(dose_grid, trough, "s-", color=PALETTE[0], alpha=0.55, lw=1.2, label="trough")
+    ax_c.plot(dose_grid, peak, "o-", color=PALETTE[0], lw=1.8, label="峰值")
+    ax_c.plot(dose_grid, trough, "s-", color=PALETTE[0], alpha=0.55, lw=1.2, label="谷值")
     ax_c.axvline(250, color=GREY, ls="--", lw=1.0)
     ax_c.set_xscale("log")
     ax_c.set_xticks([25, 50, 100, 250, 500, 1000])
     ax_c.set_xticklabels(["25", "50", "100", "250", "500", "1000"])
-    ax_c.set_xlabel("dose (mg q24h)")
-    ax_c.set_ylabel("pERK inhibition")
+    ax_c.set_xlabel("剂量（mg q24h）")
+    ax_c.set_ylabel("pERK 抑制")
     ax_c.set_ylim(0, 1.0)
     ax_c.legend(frameon=False, fontsize=6.8, loc="upper left")
-    ax_c.set_title("Daily peak-trough window")
+    ax_c.set_title("每日峰–谷窗口")
     panel_label(ax_c, "c")
 
     # (d) apoptosis fold vs dose
@@ -261,13 +266,13 @@ def fig3_signal_efficacy(pk: PKParams, pd: PDParams) -> None:
     dr = dose_response_curve(pk, pd, doses_mg=dose_grid, n_days=14.0)
     ax_d.plot(dr["dose_mg"], dr["apoptosis_max"], "o-", color=PALETTE[3], lw=1.8)
     ax_d.axvline(250, color=GREY, ls="--", lw=1.0)
-    ax_d.text(260, 1.1, "clinical\ndose", fontsize=6.8, color=GREY)
+    ax_d.text(260, 1.1, "临床\n剂量", fontsize=6.8, color=GREY)
     ax_d.set_xscale("log")
     ax_d.set_xticks([25, 50, 100, 250, 500, 1000])
     ax_d.set_xticklabels(["25", "50", "100", "250", "500", "1000"])
-    ax_d.set_xlabel("dose (mg q24h)")
-    ax_d.set_ylabel("max apoptosis fold")
-    ax_d.set_title("Apoptotic output")
+    ax_d.set_xlabel("剂量（mg q24h）")
+    ax_d.set_ylabel("最大凋亡倍数")
+    ax_d.set_title("凋亡输出")
     panel_label(ax_d, "d")
 
     fig.tight_layout()
@@ -302,9 +307,9 @@ def fig4_surface(pk: PKParams, pd: PDParams) -> None:
     X, Y = np.meshgrid(np.log10(doses), intervals)
     ax_a.plot_surface(X, Y, Z, cmap="viridis", linewidth=0,
                       antialiased=True, alpha=0.95)
-    ax_a.set_xlabel("dose (mg)", labelpad=3, fontsize=7)
-    ax_a.set_ylabel("interval (h)", labelpad=3, fontsize=7)
-    ax_a.set_zlabel("apoptosis AUC", labelpad=5, fontsize=7)
+    ax_a.set_xlabel("剂量（mg）", labelpad=3, fontsize=7)
+    ax_a.set_ylabel("间隔（h）", labelpad=3, fontsize=7)
+    ax_a.set_zlabel("凋亡 AUC", labelpad=5, fontsize=7)
     ax_a.set_xticks(np.log10([50, 100, 250, 500, 1000]))
     ax_a.set_xticklabels(["50", "100", "250", "500", "1000"], fontsize=6)
     ax_a.set_yticks([6, 12, 24, 48])
@@ -319,16 +324,16 @@ def fig4_surface(pk: PKParams, pd: PDParams) -> None:
                  linewidths=0.6, alpha=0.7)
     ax_b.plot(np.log10(250), 24, "o", color=PALETTE[1], ms=7,
               markeredgecolor="white", markeredgewidth=0.8)
-    ax_b.text(np.log10(250) + 0.04, 28.5, "clinical\nregimen", color=PALETTE[1],
+    ax_b.text(np.log10(250) + 0.04, 28.5, "临床\n方案", color=PALETTE[1],
               fontsize=6.5)
     ax_b.set_xticks(np.log10([50, 100, 250, 500, 1000]))
     ax_b.set_xticklabels(["50", "100", "250", "500", "1000"])
     ax_b.set_yticks(intervals)
     ax_b.set_yticklabels([f"{int(v)}" for v in intervals])
-    ax_b.set_xlabel("dose (mg)")
-    ax_b.set_ylabel("dosing interval (h)")
+    ax_b.set_xlabel("剂量（mg）")
+    ax_b.set_ylabel("给药间隔（h）")
     cb = fig.colorbar(cs, ax=ax_b, fraction=0.046, pad=0.03)
-    cb.set_label("apoptosis AUC", fontsize=7)
+    cb.set_label("凋亡 AUC", fontsize=7)
     cb.ax.tick_params(labelsize=6)
 
     # (c) interface choice: free vs total vs a 2x-scaled free interface
@@ -342,17 +347,17 @@ def fig4_surface(pk: PKParams, pd: PDParams) -> None:
         apop_total.append(regimen_metrics(sim_t, pk)["apop_max"])
         sim_h = _simulate_with_interface_scale(pk, pd, d, scale=2.0)
         apop_half.append(regimen_metrics(sim_h, pk)["apop_max"])
-    ax_c.plot(dose_scan, apop_free, "o-", color=PALETTE[2], label="free drug (correct)")
-    ax_c.plot(dose_scan, apop_total, "s--", color=PALETTE[1], label="total drug (wrong)")
-    ax_c.plot(dose_scan, apop_half, "^:", color=PALETTE[3], label="2x free (wrong)")
+    ax_c.plot(dose_scan, apop_free, "o-", color=PALETTE[2], label="游离药（正确）")
+    ax_c.plot(dose_scan, apop_total, "s--", color=PALETTE[1], label="总药（错误）")
+    ax_c.plot(dose_scan, apop_half, "^:", color=PALETTE[3], label="2× 游离（错误）")
     ax_c.set_xscale("log")
     ax_c.set_xticks([50, 100, 250, 500, 1000])
     ax_c.set_xticklabels(["50", "100", "250", "500", "1000"])
-    ax_c.set_xlabel("dose (mg q24h)")
-    ax_c.set_ylabel("max apoptosis fold")
+    ax_c.set_xlabel("剂量（mg q24h）")
+    ax_c.set_ylabel("最大凋亡倍数")
     ax_c.set_ylim(0.8, 3.2)
     ax_c.legend(frameon=False, fontsize=6.2, loc="lower right")
-    ax_c.set_title("Interface choice changes the prediction", fontsize=8.5, pad=5)
+    ax_c.set_title("接口选择改变预测", fontsize=8.5, pad=5)
 
     # (d) same total daily dose, different schedules
     ax_d = fig.add_axes([0.58, 0.08, 0.36, 0.33])
@@ -371,22 +376,22 @@ def fig4_surface(pk: PKParams, pd: PDParams) -> None:
         y = sim["pERK_inhibition"][mask24]
         rows.append((lab, float(np.mean(y >= 0.15) * 24.0), float(np.mean(y))))
     ax_d.axhline(0.15, color=GREY, ls="--", lw=1.0)
-    ax_d.text(0.0, 0.151, "threshold 0.15", fontsize=5.5, color=GREY)
-    ax_d.set_xlabel("time in steady-state window (h)")
-    ax_d.set_ylabel("pERK inhibition")
+    ax_d.text(0.0, 0.151, "阈值 0.15", fontsize=5.5, color=GREY)
+    ax_d.set_xlabel("稳态窗口时间（h）")
+    ax_d.set_ylabel("pERK 抑制")
     ax_d.set_ylim(0.12, 0.22)
     ax_d.legend(frameon=False, fontsize=5.8, loc="upper right", ncol=2)
-    ax_d.set_title("Same daily dose, different schedules", fontsize=8.5, pad=5)
-    txt = "\n".join(f"{lab}: {hours:.1f} h/day" for lab, hours, _ in rows)
+    ax_d.set_title("同一天总剂量，不同方案", fontsize=8.5, pad=5)
+    txt = "\n".join(f"{lab}：{hours:.1f} 小时/天" for lab, hours, _ in rows)
     ax_d.text(0.02, 0.04, txt, transform=ax_d.transAxes, fontsize=5.4,
               va="bottom", ha="left")
 
     # panel letters and titles
     fig.text(0.005, 0.975, "(a)", fontsize=11, fontweight="bold", va="top")
-    fig.text(0.22, 0.975, "Dose-schedule-efficacy surface", fontsize=9.5,
+    fig.text(0.22, 0.975, "剂量–方案–疗效曲面", fontsize=9.5,
              ha="center", va="top")
     fig.text(0.535, 0.975, "(b)", fontsize=11, fontweight="bold", va="top")
-    fig.text(0.72, 0.975, "Iso-effect landscape", fontsize=9.5,
+    fig.text(0.72, 0.975, "等效应景观", fontsize=9.5,
              ha="center", va="top")
     fig.text(0.005, 0.445, "(c)", fontsize=11, fontweight="bold", va="top")
     fig.text(0.535, 0.445, "(d)", fontsize=11, fontweight="bold", va="top")
@@ -416,7 +421,7 @@ def figS1_sensitivity(pk: PKParams, pd: PDParams) -> None:
     ax.axvline(0, color=GREY, lw=0.8)
     ax.set_yticks(ypos)
     ax.set_yticklabels([factors[i] for i in order])
-    ax.set_xlabel("change in apoptosis AUC (%)")
+    ax.set_xlabel("凋亡 AUC 变化（%）")
     ax.legend(frameon=False, fontsize=6.5, loc="lower right")
     fig.tight_layout()
     save(fig, "figS1_sensitivity")
@@ -469,19 +474,21 @@ def fig5_lumping(pk: PKParams, pd: PDParams) -> None:
     # (a) full vs exact vs naive, linear 0-24 h + log inset
     ax_a = fig.add_subplot(gs[0, 0])
     ax_a.semilogy(t, red["C_full"], color=PALETTE[0], lw=2.2,
-                  label="full 2-compartment")
+                  label="完整二室")
     ax_a.semilogy(t, red["C_exact"], color=PALETTE[1], lw=1.4, ls="--",
-                  label="exact slow-mode")
+                  label="精确慢模")
     ax_a.semilogy(t, red["C_naive"], color=PALETTE[2], lw=1.4, ls=":",
-                  label="naive 1-compartment")
+                  label="朴素一室")
     ax_a.set_xlim(0, 72)
     ax_a.set_ylim(1e-5, 2e-3)
-    ax_a.set_xlabel("time (h)")
-    ax_a.set_ylabel("central conc. (mg/L)")
+    ax_a.set_yticks([1e-5, 1e-4, 1e-3])
+    ax_a.set_yticklabels(["1e-5", "1e-4", "1e-3"])
+    ax_a.set_xlabel("时间（h）")
+    ax_a.set_ylabel("中央室浓度（mg/L）")
     ax_a.legend(frameon=False, fontsize=6.5, loc="upper right")
-    ax_a.set_title("PK reduction: exact vs naive")
+    ax_a.set_title("PK 降阶：精确 vs 朴素")
     ax_a.text(0.02, 0.03,
-              "commutator residual\nexact: 3.1e-17\nnaive: 2.7e-2",
+              "交换残差\n精确：3.1e-17\n朴素：2.7e-2",
               transform=ax_a.transAxes, fontsize=6.0, va="bottom")
     panel_label(ax_a, "a")
 
@@ -502,17 +509,18 @@ def fig5_lumping(pk: PKParams, pd: PDParams) -> None:
     ax_b.contour(QQ, VV, RATIO, levels=[0.1], colors=PALETTE[1], linewidths=1.6)
     ax_b.plot(pk.Q, pk.Vp, "o", color=PALETTE[1], ms=7,
               markeredgecolor="white", markeredgewidth=0.8)
-    ax_b.text(pk.Q + 4, pk.Vp + 60, "clinical PK", color=PALETTE[1], fontsize=6.5)
-    ax_b.set_xlabel("inter-compartmental clearance Q (L/h)")
-    ax_b.set_ylabel("peripheral volume Vp (L)")
+    ax_b.text(pk.Q + 4, pk.Vp + 60, "临床 PK", color=PALETTE[1], fontsize=6.8,
+              bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.8))
+    ax_b.set_xlabel("室间清除率 Q（L/h）")
+    ax_b.set_ylabel("外周室体积 Vp（L）")
     cb = fig.colorbar(cs, ax=ax_b, fraction=0.046, pad=0.03)
     cb.set_label("log10($|\\lambda_{slow}|/|\\lambda_{fast}|$)", fontsize=7)
     cb.ax.tick_params(labelsize=6)
     from matplotlib.lines import Line2D
     ax_b.legend(handles=[Line2D([0], [0], color=PALETTE[1], lw=1.6,
-                                label="10x separation")],
+                                label="10× 分离")],
                 frameon=False, fontsize=6.5, loc="lower right")
-    ax_b.set_title("Eigenvalue separation")
+    ax_b.set_title("特征值分离")
     panel_label(ax_b, "b")
 
     # (c) trajectory error vs Q
@@ -529,15 +537,17 @@ def fig5_lumping(pk: PKParams, pd: PDParams) -> None:
         err_exact.append(np.trapezoid(np.abs(rr["C_full"] - rr["C_exact"]), tt) / denom)
         err_naive.append(np.trapezoid(np.abs(rr["C_full"] - rr["C_naive"]), tt) / denom)
     ax_c.semilogy(q_scan, np.maximum(err_exact, 1e-18), color=PALETTE[0],
-                  label="exact slow-mode")
-    ax_c.semilogy(q_scan, err_naive, color=PALETTE[2], label="naive total-amount")
+                  label="精确慢模")
+    ax_c.semilogy(q_scan, err_naive, color=PALETTE[2], label="朴素总量")
     ax_c.axvline(pk.Q, color=GREY, ls="--", lw=1.0)
     ax_c.axvspan(5, 20, color=GREY, alpha=0.10, lw=0)
-    ax_c.text(7, 0.55, "poor\nseparation", fontsize=6.2, color=GREY)
-    ax_c.set_xlabel("Q (L/h)")
-    ax_c.set_ylabel("relative concentration error")
+    ax_c.text(7, 0.55, "分离\n较差", fontsize=6.2, color=GREY)
+    ax_c.set_xlabel("Q（L/h）")
+    ax_c.set_ylabel("相对浓度误差")
+    ax_c.set_yticks([1e-5, 1e-3, 1e-1])
+    ax_c.set_yticklabels(["1e-5", "1e-3", "1e-1"])
     ax_c.legend(frameon=False, fontsize=6.5)
-    ax_c.set_title("Trajectory error of the reduction")
+    ax_c.set_title("降阶的轨迹误差")
     panel_label(ax_c, "c")
 
     # (d) downstream error: delta pERK inhibition
@@ -569,9 +579,9 @@ def fig5_lumping(pk: PKParams, pd: PDParams) -> None:
     ax_d.fill_between(t2, 0, delta, color=PALETTE[2], alpha=0.25, lw=0)
     ax_d.plot(t2, delta, color=PALETTE[2], lw=1.6)
     ax_d.axhline(0, color=GREY, lw=0.8)
-    ax_d.set_xlabel("time (h)")
-    ax_d.set_ylabel("$\\Delta$ pERK inhibition (naive - full)")
-    ax_d.set_title("Downstream error of the naive reduction")
+    ax_d.set_xlabel("时间（h）")
+    ax_d.set_ylabel("Δ pERK 抑制（朴素 - 完整）")
+    ax_d.set_title("朴素降阶的下游误差")
     panel_label(ax_d, "d")
 
     fig.tight_layout()
@@ -597,25 +607,25 @@ def fig1_framework(pk: PKParams, pd: PDParams) -> None:
     pk_box = FancyBboxPatch((0.03, 0.42), 0.30, 0.46, boxstyle="round,pad=0.012",
                             fc="#EAF2F8", ec=PALETTE[0], lw=1.2)
     ax.add_patch(pk_box)
-    ax.text(0.18, 0.84, "PK module", ha="center", va="center",
+    ax.text(0.18, 0.84, "PK 模块", ha="center", va="center",
             fontsize=9, fontweight="bold", color=PALETTE[0])
     # compartments
     ax.add_patch(FancyBboxPatch((0.06, 0.62), 0.08, 0.12, boxstyle="round,pad=0.006",
                                 fc="white", ec=PALETTE[0], lw=0.9))
-    ax.text(0.10, 0.68, "gut", ha="center", va="center", fontsize=7)
+    ax.text(0.10, 0.68, "胃肠道", ha="center", va="center", fontsize=7)
     ax.add_patch(FancyBboxPatch((0.18, 0.62), 0.10, 0.12, boxstyle="round,pad=0.006",
                                 fc="white", ec=PALETTE[0], lw=0.9))
-    ax.text(0.23, 0.68, "central", ha="center", va="center", fontsize=7)
+    ax.text(0.23, 0.68, "中央室", ha="center", va="center", fontsize=7)
     ax.add_patch(FancyBboxPatch((0.18, 0.46), 0.10, 0.10, boxstyle="round,pad=0.006",
                                 fc="white", ec=PALETTE[0], lw=0.9))
-    ax.text(0.23, 0.51, "periph.", ha="center", va="center", fontsize=7)
+    ax.text(0.23, 0.51, "外周室", ha="center", va="center", fontsize=7)
     ax.annotate("", xy=(0.18, 0.68), xytext=(0.14, 0.68),
                 arrowprops=dict(arrowstyle="->", lw=0.9, color=PALETTE[0]))
     ax.annotate("", xy=(0.23, 0.62), xytext=(0.23, 0.56),
                 arrowprops=dict(arrowstyle="<->", lw=0.9, color=PALETTE[0]))
     ax.annotate("", xy=(0.10, 0.74), xytext=(0.05, 0.80),
                 arrowprops=dict(arrowstyle="->", lw=1.2, color=PALETTE[0]))
-    ax.text(0.035, 0.82, "dose", fontsize=6.5, color=PALETTE[0])
+    ax.text(0.035, 0.82, "给药", fontsize=6.5, color=PALETTE[0])
 
     # --- interface --------------------------------------------------------
     ax.add_patch(FancyBboxPatch((0.37, 0.55), 0.10, 0.12, boxstyle="round,pad=0.008",
@@ -624,16 +634,16 @@ def fig1_framework(pk: PKParams, pd: PDParams) -> None:
             fontsize=9, color=PALETTE[1], fontweight="bold")
     ax.annotate("", xy=(0.37, 0.61), xytext=(0.33, 0.61),
                 arrowprops=dict(arrowstyle="->", lw=1.4, color=PALETTE[1]))
-    ax.text(0.42, 0.71, "interface", ha="center", fontsize=6.5, color=PALETTE[1])
+    ax.text(0.42, 0.71, "接口", ha="center", fontsize=6.5, color=PALETTE[1])
 
     # --- PD module (right) ------------------------------------------------
     pd_box = FancyBboxPatch((0.50, 0.30), 0.47, 0.58, boxstyle="round,pad=0.012",
                             fc="#E8F8F5", ec=PALETTE[2], lw=1.2)
     ax.add_patch(pd_box)
-    ax.text(0.735, 0.84, "PD module", ha="center", va="center",
+    ax.text(0.735, 0.84, "PD 模块", ha="center", va="center",
             fontsize=9, fontweight="bold", color=PALETTE[2])
     # cascade boxes
-    labels = ["EGFR", "MEK", "ERK", "apoptosis"]
+    labels = ["EGFR", "MEK", "ERK", "凋亡"]
     xs = [0.55, 0.66, 0.77, 0.88]
     for x, lab in zip(xs, labels):
         ax.add_patch(FancyBboxPatch((x, 0.60), 0.08, 0.10,
@@ -645,13 +655,13 @@ def fig1_framework(pk: PKParams, pd: PDParams) -> None:
                     arrowprops=dict(arrowstyle="->", lw=0.9, color=PALETTE[2]))
     ax.annotate("", xy=(0.55, 0.65), xytext=(0.47, 0.61),
                 arrowprops=dict(arrowstyle="->", lw=1.4, color=PALETTE[1]))
-    ax.text(0.735, 0.42, "drug binding → occupancy → signal → effect",
+    ax.text(0.735, 0.42, "药物结合 → 靶点占有 → 信号 → 效应",
             ha="center", fontsize=6.5, color=GREY)
 
     # --- cospan equation --------------------------------------------------
-    ax.text(0.5, 0.16, "composite  =  PK  $\\otimes_{C_{free}}$  PD",
+    ax.text(0.5, 0.16, "复合  =  PK  $\\otimes_{C_{free}}$  PD",
             ha="center", va="center", fontsize=11, fontweight="bold")
-    ax.text(0.5, 0.06, "pushout on the scalar interface  +  shared-coordinate dynamics",
+    ax.text(0.5, 0.06, "标量接口上的推出  +  共享坐标动力学",
             ha="center", va="center", fontsize=7.5, color=GREY)
 
     fig.tight_layout()

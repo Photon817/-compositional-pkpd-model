@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this code, please cite this repository and the original dataset."
-title: "Compositional PK/PD"
-abstract: "Open PK/PD models composed on a free-drug interface: dose-schedule optimization, interface-error attribution, exact lumping, and external tumour-growth validation."
+title: "组合式 PK/PD"
+abstract: "在游离药物接口上组合开 PK/PD 模型：剂量–方案优化、接口误差归因、精确粗粒化与外部肿瘤生长验证。"
 authors:
   - name: "Photon817"
 version: "0.1.0"

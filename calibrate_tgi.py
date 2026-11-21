@@ -229,7 +229,10 @@ def panel_label(ax, letter: str) -> None:
 
 def make_figure(results, lam0, lam1, kappa) -> None:
     plt.rcParams.update({
-        "font.family": "DejaVu Sans",
+        "font.family": "sans-serif",
+        "font.sans-serif": ["Hiragino Sans GB", "Arial Unicode MS",
+                           "PingFang HK", "DejaVu Sans"],
+        "axes.unicode_minus": False,
         "font.size": 8.5,
         "axes.titlesize": 9.5,
         "axes.labelsize": 8.5,
@@ -254,13 +257,13 @@ def make_figure(results, lam0, lam1, kappa) -> None:
     r = results[0.0]
     ax_a.errorbar(r["t"], r["obs"], yerr=r["sem"], color=colors[0.0],
                   marker="o", ms=3.5, lw=0, capsize=2, elinewidth=1.0,
-                  label="observed")
-    ax_a.plot(r["t"], r["pred"], color=colors[0.0], lw=2.0, label="model")
-    ax_a.set_xlabel("time (days)")
-    ax_a.set_ylabel("tumour volume (mm$^3$)")
+                  label="实测")
+    ax_a.plot(r["t"], r["pred"], color=colors[0.0], lw=2.0, label="模型")
+    ax_a.set_xlabel("时间（天）")
+    ax_a.set_ylabel("肿瘤体积（mm$^3$）")
     ax_a.set_xlim(0, 30)
     ax_a.legend(frameon=False, fontsize=7)
-    ax_a.set_title("Vehicle growth (calibration)")
+    ax_a.set_title("Vehicle 生长（校准）")
     panel_label(ax_a, "a")
 
     # (b) 100 mg/kg
@@ -269,15 +272,15 @@ def make_figure(results, lam0, lam1, kappa) -> None:
     ax_b.axvspan(DOSE_START, DOSE_END, color=GREY, alpha=0.08, lw=0)
     ax_b.errorbar(r["t"], r["obs"], yerr=r["sem"], color=colors[100.0],
                   marker="o", ms=3.5, lw=0, capsize=2, elinewidth=1.0,
-                  label="observed")
-    ax_b.plot(r["t"], r["pred"], color=colors[100.0], lw=2.0, label="model")
-    ax_b.text(DOSE_START + 0.3, ax_b.get_ylim()[1] * 0.9, "dosing",
+                  label="实测")
+    ax_b.plot(r["t"], r["pred"], color=colors[100.0], lw=2.0, label="模型")
+    ax_b.text(DOSE_START + 0.3, ax_b.get_ylim()[1] * 0.9, "给药",
               fontsize=6.5, color=GREY)
-    ax_b.set_xlabel("time (days)")
-    ax_b.set_ylabel("tumour volume (mm$^3$)")
+    ax_b.set_xlabel("时间（天）")
+    ax_b.set_ylabel("肿瘤体积（mm$^3$）")
     ax_b.set_xlim(0, 30)
     ax_b.legend(frameon=False, fontsize=7)
-    ax_b.set_title("100 mg/kg (calibration)")
+    ax_b.set_title("100 mg/kg（校准）")
     panel_label(ax_b, "b")
 
     # (c) validation
@@ -286,14 +289,14 @@ def make_figure(results, lam0, lam1, kappa) -> None:
         r = results[dose]
         ax_c.errorbar(r["t"], r["obs"], yerr=r["sem"], color=colors[dose],
                       marker="o", ms=3, lw=0, capsize=2, elinewidth=0.8,
-                      alpha=0.9, label=f"{dose:g} mg/kg obs")
+                      alpha=0.9, label=f"{dose:g} mg/kg 实测")
         ax_c.plot(r["t"], r["pred"], color=colors[dose], lw=1.6, ls="--",
-                  label=f"{dose:g} mg/kg model")
-    ax_c.set_xlabel("time (days)")
-    ax_c.set_ylabel("tumour volume (mm$^3$)")
+                  label=f"{dose:g} mg/kg 模型")
+    ax_c.set_xlabel("时间（天）")
+    ax_c.set_ylabel("肿瘤体积（mm$^3$）")
     ax_c.set_xlim(0, 30)
     ax_c.legend(frameon=False, fontsize=6.2, ncol=2)
-    ax_c.set_title("Sub-therapeutic doses (validation)")
+    ax_c.set_title("亚治疗剂量（验证）")
     panel_label(ax_c, "c")
 
     # (d) day-30 response
@@ -304,9 +307,9 @@ def make_figure(results, lam0, lam1, kappa) -> None:
     pred30 = [results[d]["day30_pred"] for d in doses]
     w = 0.36
     ax_d.bar(x - w / 2, obs30, w, color=[colors[d] for d in doses],
-             edgecolor="white", linewidth=0.8, label="observed")
+             edgecolor="white", linewidth=0.8, label="实测")
     ax_d.bar(x + w / 2, pred30, w, color=[colors[d] for d in doses],
-             alpha=0.45, edgecolor="white", linewidth=0.8, label="model")
+             alpha=0.45, edgecolor="white", linewidth=0.8, label="模型")
     vehicle = obs30[0]
     for i, d in enumerate(doses):
         if d != 0:
@@ -316,13 +319,13 @@ def make_figure(results, lam0, lam1, kappa) -> None:
                       ha="center", fontsize=5.4)
             ax_d.text(i + w / 2, pred30[i] + 45, f"{tgi_pred:+.0f}%",
                       ha="center", fontsize=5.4)
-    ax_d.text(0.02, 0.96, "TGI vs vehicle", transform=ax_d.transAxes,
+    ax_d.text(0.02, 0.96, "TGI（相对 vehicle）", transform=ax_d.transAxes,
               fontsize=6.0, va="top", color=GREY)
     ax_d.set_xticks(x)
     ax_d.set_xticklabels([f"{d:g}" for d in doses])
-    ax_d.set_xlabel("dose (mg/kg)")
-    ax_d.set_ylabel("day-30 tumour volume (mm$^3$)")
-    ax_d.set_title("Day-30 response")
+    ax_d.set_xlabel("剂量（mg/kg）")
+    ax_d.set_ylabel("第 30 天肿瘤体积（mm$^3$）")
+    ax_d.set_title("第 30 天响应")
     panel_label(ax_d, "d")
 
     fig.tight_layout()
