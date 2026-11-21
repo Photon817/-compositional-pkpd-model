@@ -6,7 +6,7 @@ authors:
   - name: "Photon817"
 version: "0.1.0"
 date-released: "2025-11-21"
-url: "https://github.com/Photon817/compositional-pkpd"
+url: "https://github.com/Photon817/-compositional-pkpd-model"
 license: "BSD-3-Clause"
 references:
   - type: "article"

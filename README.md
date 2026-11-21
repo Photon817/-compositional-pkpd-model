@@ -95,7 +95,7 @@ dV/dt = 2 λ0 λ1 V / (2 λ0 V + λ1) − κ C(t) V
 ## 复现
 
 ```bash
-git clone https://github.com/Photon817/compositional-pkpd.git
+git clone https://github.com/Photon817/-compositional-pkpd-model.git compositional-pkpd
 cd compositional-pkpd
 pip install -r requirements.txt
 
