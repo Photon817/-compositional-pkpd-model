@@ -1,0 +1,15 @@
+Third-party data notice
+=======================
+
+The CSV files in `data/` are redistributed unmodified from
+https://github.com/DavAug/ErlotinibGefitinib (BSD 3-Clause License).
+
+They are derived from the study:
+
+  Eigenmann MJ, et al. Combining Nonclinical Experiments with Translational
+  PKPD Modeling to Differentiate Erlotinib and Gefitinib.
+  Mol Cancer Ther. 2016;15(12):3110-3121.
+
+The data remain the work of their original authors. They are included here
+for reproducibility and external validation; they are not authored by the
+maintainer of this repository. See `data/README.md` for the column dictionary.

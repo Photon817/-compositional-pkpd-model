@@ -1,0 +1,4 @@
+parameter,value,unit,source
+lam0,0.3365135662790732,1/day,vehicle fit
+lam1,41.09136491572694,mm3/day,vehicle fit
+kappa,0.0002993516155933145,mL/(ng day),"100 mg/kg fit, measured C_ss"

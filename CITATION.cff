@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite this repository and the original dataset."
+title: "Compositional PK/PD"
+abstract: "Open PK/PD models composed on a free-drug interface: dose-schedule optimization, interface-error attribution, exact lumping, and external tumour-growth validation."
+authors:
+  - name: "Photon817"
+version: "0.1.0"
+date-released: "2025-11-21"
+url: "https://github.com/Photon817/compositional-pkpd"
+license: "BSD-3-Clause"
+references:
+  - type: "article"
+    title: "Combining Nonclinical Experiments with Translational PKPD Modeling to Differentiate Erlotinib and Gefitinib"
+    authors:
+      - family-names: "Eigenmann"
+        given-names: "M. J."
+    journal: "Molecular Cancer Therapeutics"
+    year: 2016
+    volume: 15
+    issue: 12
+    start: 3110
+    end: 3121
